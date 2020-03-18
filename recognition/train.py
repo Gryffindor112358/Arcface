@@ -37,7 +37,7 @@ args = None
 
 
 
-def parse_args():
+def parse_args():  # 命令行输入的执行参数
   parser = argparse.ArgumentParser(description='Train face network')
   # general
   parser.add_argument('--dataset', default=default.dataset, help='dataset config')
@@ -146,9 +146,9 @@ def get_symbol(args):
   out = mx.symbol.Group(out_list)
   return out
 
-def train_net(args):
+def train_net(args):  # 程序执行的主函数
     ctx = []
-    cvd = os.environ['CUDA_VISIBLE_DEVICES'].strip()
+    cvd = os.environ['CUDA_VISIBLE_DEVICES'].strip()  # 调用gpu设备
     if len(cvd)>0:
       for i in range(len(cvd.split(','))):
         ctx.append(mx.gpu(i))
@@ -182,15 +182,16 @@ def train_net(args):
     print('Called with argument:', args, config)
     data_shape = (args.image_channel,image_size[0],image_size[1])
     mean = None
+    #  以上均为为训练各环节配置参数
 
     begin_epoch = 0
-    if len(args.pretrained)==0:
+    if len(args.pretrained)==0:  # 如果没有预训练模型
       arg_params = None
       aux_params = None
       sym = get_symbol(args)
-      if config.net_name=='spherenet':
+      if config.net_name=='spherenet':  # 用spherenet网络训练
         data_shape_dict = {'data' : (args.per_batch_size,)+data_shape}
-        spherenet.init_weights(sym, data_shape_dict, args.num_layers)
+        spherenet.init_weights(sym, data_shape_dict, args.num_layers)  # 加载spherenet相关参数
     else:
       print('loading', args.pretrained, args.pretrained_epoch)
       _, arg_params, aux_params = mx.model.load_checkpoint(args.pretrained, args.pretrained_epoch)
@@ -371,8 +372,8 @@ def train_net(args):
 
 def main():
     global args
-    args = parse_args()
-    train_net(args)
+    args = parse_args()  # 获取参数
+    train_net(args)   # 执行train_net函数(149行)
 
 if __name__ == '__main__':
     main()

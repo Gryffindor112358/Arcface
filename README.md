@@ -8,7 +8,7 @@ By Jia Guo and [Jiankang Deng](https://jiankangdeng.github.io/)
 The code of InsightFace is released under the MIT License. There is no limitation for both acadmic and commercial usage.
 
 The training data containing the annotation (and the models trained with these data) are available for non-commercial research purposes only.
- 
+
 ## ArcFace Video Demo
 
 [![ArcFace Demo](https://github.com/deepinsight/insightface/blob/master/resources/facerecognitionfromvideo.PNG)](https://www.youtube.com/watch?v=y-D1tReryGA&t=81s)
@@ -75,7 +75,7 @@ Our method, ArcFace, was initially described in an [arXiv technical report](http
 
 ### Training Data
 
-All face images are aligned by [MTCNN](https://kpzhang93.github.io/MTCNN_face_detection_alignment/index.html) and cropped to 112x112:
+All face images are aligned by [MTCNN](https://kpzhang93.github.io/MTCNN_face_detection_alignment/index.html) and cropped to **112x112**:
 
 Please check [Dataset-Zoo](https://github.com/deepinsight/insightface/wiki/Dataset-Zoo) for detail information and dataset downloading.
 
@@ -156,9 +156,9 @@ CUDA_VISIBLE_DEVICES='0,1,2,3' python -u train.py --network m1 --loss triplet --
 
 *LResNet100E-IR* network trained on *MS1M-Arcface* dataset with ArcFace loss:
 
-| Method  | LFW(%) | CFP-FP(%) | AgeDB-30(%) |  
-| ------- | ------ | --------- | ----------- |  
-|  Ours   | 99.80+ | 98.0+     | 98.20+      |   
+| Method  | LFW(%) | CFP-FP(%) | AgeDB-30(%) |
+| ------- | ------ | --------- | ----------- |
+|  Ours   | 99.80+ | 98.0+     | 98.20+      |
 
 
 
