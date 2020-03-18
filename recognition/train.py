@@ -212,7 +212,7 @@ def train_net(args):  # 程序执行的主函数
     )
     val_dataiter = None
 
-    if config.loss_name.find('triplet')>=0:
+    if config.loss_name.find('triplet')>=0:   # 若损失函数是triplet
       from triplet_image_iter import FaceImageIter
       triplet_params = [config.triplet_bag_size, config.triplet_alpha, config.triplet_max_ap]
       train_dataiter = FaceImageIter(
@@ -249,8 +249,8 @@ def train_net(args):  # 程序执行的主函数
         metric2 = LossValueMetric()
         eval_metrics.append( mx.metric.create(metric2) )
 
-    if config.net_name=='fresnet' or config.net_name=='fmobilefacenet':
-      initializer = mx.init.Xavier(rnd_type='gaussian', factor_type="out", magnitude=2) #resnet style
+    if config.net_name=='fresnet' or config.net_name=='fmobilefacenet':  # 判断网络名字+1
+      initializer = mx.init.Xavier(rnd_type='gaussian', factor_type="out", magnitude=2) #resnet style  啥是resnet style？？？？
     else:
       initializer = mx.init.Xavier(rnd_type='uniform', factor_type="in", magnitude=2)
     #initializer = mx.init.Xavier(rnd_type='gaussian', factor_type="out", magnitude=2) #resnet style
