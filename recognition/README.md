@@ -47,7 +47,7 @@ In this part, we assume you are in the directory *`$INSIGHTFACE_ROOT/recognition
 
 Place and edit config file:
 ```Shell
-cp sample_config.py config.py
+cp sample_config.py config.py    # 把sample_config.py复制到新创建的文件config.py文件中
 vim config.py # edit dataset path etc..
 ```
 

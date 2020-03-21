@@ -37,10 +37,10 @@ args = None
 
 
 
-def parse_args():  # 命令行输入的执行参数
+def parse_args():  # 命令行输入的执行参数，输入的是网络类型，损失函数，dataset，其余都是默认值
   parser = argparse.ArgumentParser(description='Train face network')
   # general
-  parser.add_argument('--dataset', default=default.dataset, help='dataset config')
+  parser.add_argument('--dataset', default=default.dataset, help='dataset config')  # 前三手是手动输入的，剩下的基本都是使用的默认值
   parser.add_argument('--network', default=default.network, help='network config')
   parser.add_argument('--loss', default=default.loss, help='loss config')
   args, rest = parser.parse_known_args()
@@ -61,12 +61,12 @@ def parse_args():  # 命令行输入的执行参数
   return args
 
 
-def get_symbol(args):
+def get_symbol(args): # 在train_net函数中，判断是否有预训练模型后都执行了这个函数
   embedding = eval(config.net_name).get_symbol()
   all_label = mx.symbol.Variable('softmax_label')
   gt_label = all_label
   is_softmax = True
-  if config.loss_name=='softmax': #softmax
+  if config.loss_name=='softmax': #softmax 
     _weight = mx.symbol.Variable("fc7_weight", shape=(config.num_classes, config.emb_size), 
         lr_mult=config.fc7_lr_mult, wd_mult=config.fc7_wd_mult, init=mx.init.Normal(0.01))
     if config.fc7_no_bias:
@@ -188,14 +188,14 @@ def train_net(args):  # 程序执行的主函数
     if len(args.pretrained)==0:  # 如果没有预训练模型
       arg_params = None
       aux_params = None
-      sym = get_symbol(args)
+      sym = get_symbol(args)  # 这个是前面定义的那个get_symbol函数
       if config.net_name=='spherenet':  # 用spherenet网络训练
         data_shape_dict = {'data' : (args.per_batch_size,)+data_shape}
         spherenet.init_weights(sym, data_shape_dict, args.num_layers)  # 加载spherenet相关参数
     else:
       print('loading', args.pretrained, args.pretrained_epoch)
       _, arg_params, aux_params = mx.model.load_checkpoint(args.pretrained, args.pretrained_epoch)
-      sym = get_symbol(args)
+      sym = get_symbol(args)  # 这儿也是。总之就是这个get_symbol函数一定要执行的。
 
     if config.count_flops:
       all_layers = sym.get_internals()
@@ -372,8 +372,9 @@ def train_net(args):  # 程序执行的主函数
 
 def main():
     global args
-    args = parse_args()  # 获取参数
+    args = parse_args()  # 获取参数 参数有网络类型，损失函数，dataset，还有很多默认的取值
     train_net(args)   # 执行train_net函数(149行)
+    # 代码的运行指令为 CUDA_VISIBLE_DEVICES='0,1,2,3' python -u train.py --network r100 --loss arcface --dataset emore
 
 if __name__ == '__main__':
     main()
