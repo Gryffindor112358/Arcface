@@ -266,14 +266,14 @@ def train_net(args):  # 程序执行的主函数
         data_set = verification.load_bin(path, image_size)
         ver_list.append(data_set)
         ver_name_list.append(name)
-        print('ver', name)
+        print('ver', name)   # 把数据集整好了
 
 
 
     def ver_test(nbatch):
       results = []
-      for i in range(len(ver_list)):
-        acc1, std1, acc2, std2, xnorm, embeddings_list = verification.test(ver_list[i], model, args.batch_size, 10, None, None)
+      for i in range(len(ver_list)): # 对数据集进行循环
+        acc1, std1, acc2, std2, xnorm, embeddings_list = verification.test(ver_list[i], model, args.batch_size, 10, None, None) # 训练的地方
         print('[%s][%d]XNorm: %f' % (ver_name_list[i], nbatch, xnorm))
         #print('[%s][%d]Accuracy: %1.5f+-%1.5f' % (ver_name_list[i], nbatch, acc1, std1))
         print('[%s][%d]Accuracy-Flip: %1.5f+-%1.5f' % (ver_name_list[i], nbatch, acc2, std2))
@@ -304,7 +304,7 @@ def train_net(args):  # 程序执行的主函数
         print('lr-batch-epoch:',opt.lr,param.nbatch,param.epoch)
 
       if mbatch>=0 and mbatch%args.verbose==0:
-        acc_list = ver_test(mbatch)
+        acc_list = ver_test(mbatch)  # 调用上面定义的函数
         save_step[0]+=1
         msave = save_step[0]
         do_save = False
@@ -355,7 +355,7 @@ def train_net(args):  # 程序执行的主函数
     epoch_cb = None
     train_dataiter = mx.io.PrefetchingIter(train_dataiter)
 
-    model.fit(train_dataiter,
+    model.fit(train_dataiter,  # 此处的fit和上面的test有什么关系呢？
         begin_epoch        = begin_epoch,
         num_epoch          = 999999,
         eval_data          = val_dataiter,
