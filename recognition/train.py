@@ -66,7 +66,7 @@ def get_symbol(args): # 在train_net函数中，判断是否有预训练模型�
   all_label = mx.symbol.Variable('softmax_label')
   gt_label = all_label
   is_softmax = True
-  if config.loss_name=='softmax': #softmax 
+  if config.loss_name=='softmax': # softmax 
     _weight = mx.symbol.Variable("fc7_weight", shape=(config.num_classes, config.emb_size), 
         lr_mult=config.fc7_lr_mult, wd_mult=config.fc7_wd_mult, init=mx.init.Normal(0.01))
     if config.fc7_no_bias:
@@ -74,14 +74,14 @@ def get_symbol(args): # 在train_net函数中，判断是否有预训练模型�
     else:
       _bias = mx.symbol.Variable('fc7_bias', lr_mult=2.0, wd_mult=0.0)
       fc7 = mx.sym.FullyConnected(data=embedding, weight = _weight, bias = _bias, num_hidden=config.num_classes, name='fc7')
-  elif config.loss_name=='margin_softmax':
+  elif config.loss_name=='margin_softmax': # margin_softmax
     _weight = mx.symbol.Variable("fc7_weight", shape=(config.num_classes, config.emb_size), 
         lr_mult=config.fc7_lr_mult, wd_mult=config.fc7_wd_mult, init=mx.init.Normal(0.01))
     s = config.loss_s
     _weight = mx.symbol.L2Normalization(_weight, mode='instance')
     nembedding = mx.symbol.L2Normalization(embedding, mode='instance', name='fc1n')*s
     fc7 = mx.sym.FullyConnected(data=nembedding, weight = _weight, no_bias = True, num_hidden=config.num_classes, name='fc7')
-    if config.loss_m1!=1.0 or config.loss_m2!=0.0 or config.loss_m3!=0.0:
+    if config.loss_m1!=1.0 or config.loss_m2!=0.0 or config.loss_m3!=0.0:  # 这边的config.lossm123都是什么呢
       if config.loss_m1==1.0 and config.loss_m2==0.0:
         s_m = s*config.loss_m3
         gt_one_hot = mx.sym.one_hot(gt_label, depth = config.num_classes, on_value = s_m, off_value = 0.0)
@@ -103,13 +103,13 @@ def get_symbol(args): # 在train_net函数中，判断是否有预训练模型�
         gt_one_hot = mx.sym.one_hot(gt_label, depth = config.num_classes, on_value = 1.0, off_value = 0.0)
         body = mx.sym.broadcast_mul(gt_one_hot, diff)
         fc7 = fc7+body
-  elif config.loss_name.find('triplet')>=0:
+  elif config.loss_name.find('triplet')>=0: # triplet
     is_softmax = False
     nembedding = mx.symbol.L2Normalization(embedding, mode='instance', name='fc1n')
     anchor = mx.symbol.slice_axis(nembedding, axis=0, begin=0, end=args.per_batch_size//3)
     positive = mx.symbol.slice_axis(nembedding, axis=0, begin=args.per_batch_size//3, end=2*args.per_batch_size//3)
     negative = mx.symbol.slice_axis(nembedding, axis=0, begin=2*args.per_batch_size//3, end=args.per_batch_size)
-    if config.loss_name=='triplet':
+    if config.loss_name=='triplet': # triplet
       ap = anchor - positive
       an = anchor - negative
       ap = ap*ap
@@ -129,7 +129,7 @@ def get_symbol(args): # 在train_net函数中，判断是否有预训练模型�
       triplet_loss = mx.symbol.mean(triplet_loss)
     triplet_loss = mx.symbol.MakeLoss(triplet_loss)
   out_list = [mx.symbol.BlockGrad(embedding)]
-  if is_softmax:
+  if is_softmax: # 这个is_softmax是哪来的
     softmax = mx.symbol.SoftmaxOutput(data=fc7, label = gt_label, name='softmax', normalization='valid')
     out_list.append(softmax)
     if config.ce_loss:
