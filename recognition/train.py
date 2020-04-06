@@ -14,7 +14,7 @@ import mxnet as mx
 from mxnet import ndarray as nd
 import argparse
 import mxnet.optimizer as optimizer
-from config import config, default, generate_config
+from config import config, default, generate_config # 严重怀疑这里是此文件夹下的sample_config.py，但其实还有一大部分config.xx在其中找不到
 from metric import *
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 import flops_counter
@@ -129,7 +129,7 @@ def get_symbol(args): # 在train_net函数中，判断是否有预训练模型�
       triplet_loss = mx.symbol.mean(triplet_loss)
     triplet_loss = mx.symbol.MakeLoss(triplet_loss)
   out_list = [mx.symbol.BlockGrad(embedding)]
-  if is_softmax: # 这个is_softmax是哪来的
+  if is_softmax: # 这个is_softmax是哪来的 回答：就在函数get_symbol一开始定义的，定义为True
     softmax = mx.symbol.SoftmaxOutput(data=fc7, label = gt_label, name='softmax', normalization='valid')
     out_list.append(softmax)
     if config.ce_loss:
@@ -192,7 +192,7 @@ def train_net(args):  # 程序执行的主函数
       if config.net_name=='spherenet':  # 用spherenet网络训练
         data_shape_dict = {'data' : (args.per_batch_size,)+data_shape}
         spherenet.init_weights(sym, data_shape_dict, args.num_layers)  # 加载spherenet相关参数
-    else:
+    else:# 如果有，则加载预训练模型
       print('loading', args.pretrained, args.pretrained_epoch)
       _, arg_params, aux_params = mx.model.load_checkpoint(args.pretrained, args.pretrained_epoch)
       sym = get_symbol(args)  # 这儿也是。总之就是这个get_symbol函数一定要执行的。
@@ -212,7 +212,7 @@ def train_net(args):  # 程序执行的主函数
     )
     val_dataiter = None
 
-    if config.loss_name.find('triplet')>=0:   # 若损失函数是triplet
+    if config.loss_name.find('triplet')>=0:   # 若损失函数是triplet，为train_dataiter配置参数
       from triplet_image_iter import FaceImageIter
       triplet_params = [config.triplet_bag_size, config.triplet_alpha, config.triplet_max_ap]
       train_dataiter = FaceImageIter(
@@ -230,7 +230,7 @@ def train_net(args):  # 程序执行的主函数
       )
       _metric = LossValueMetric()
       eval_metrics = [mx.metric.create(_metric)]
-    else:
+    else:# 同样为train_dataiter配置参数
       from image_iter import FaceImageIter
       train_dataiter = FaceImageIter(
           batch_size           = args.batch_size,
@@ -249,9 +249,9 @@ def train_net(args):  # 程序执行的主函数
         metric2 = LossValueMetric()
         eval_metrics.append( mx.metric.create(metric2) )
 
-    if config.net_name=='fresnet' or config.net_name=='fmobilefacenet':  # 判断网络名字+1
+    if config.net_name=='fresnet' or config.net_name=='fmobilefacenet':  # 判断网络名字+1，并给initializer赋值
       initializer = mx.init.Xavier(rnd_type='gaussian', factor_type="out", magnitude=2) #resnet style  啥是resnet style？？？？
-    else:
+    else: # 同样给initializer赋值，不同之处在于rnd_type，factor_type
       initializer = mx.init.Xavier(rnd_type='uniform', factor_type="in", magnitude=2)
     #initializer = mx.init.Xavier(rnd_type='gaussian', factor_type="out", magnitude=2) #resnet style
     _rescale = 1.0/args.ctx_num
