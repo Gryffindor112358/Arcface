@@ -31,4 +31,9 @@
 2. 将data_set append到ver_list中，把name append到ver_name_list中
 
 
+### 操作流程
 
+1.把训练集face_emore放在目录datasets下
+2.训练：在recognition目录下先copy一个sample_config.py命名为config.py,并编辑里面的参数。运行train.py,具体命令如CUDA_VISIBLE_DEVICES='0,1,2,3' python -u train.py --network r100 --loss arcface --dataset emore（有训练好的模型可以直接下载Model-Zoo），有一种损失函数Combined Margin，取得的整体效果会好一些。（训练好的模型不知道是不是自动保存在models目录下或是哪里。。）
+3.验证模型：在src/eval目录下运行verification.py来验证模型。（测试集不需要我们准备，貌似可以连接到LFW等数据库来进行验证）（不知道怎么找到已经训练好的模型）
+4.Feature Embedding（不确定是不是特征的提取，有可能是类似的作用，在Readme里貌似也找不到其他能够提取特征的东西了。。）：把训练好的模型放在models目录下，运行deploy目录下的test.py.（test.py里可以设置你想提取特征的图片，但是图片需要进行校正对齐过成112x112，校正对齐可用MTCNN）
