@@ -14,7 +14,7 @@ import mxnet as mx
 from mxnet import ndarray as nd
 import argparse
 import mxnet.optimizer as optimizer
-from config import config, default, generate_config # 严重怀疑这里是此文件夹下的sample_config.py，但其实还有一大部分config.xx在其中找不到
+from config import config, default, generate_config # 这个config.py是在运行过程中创建的，然后把sample_config.py里面的东西放进去，详见README.py
 from metric import *
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'common'))
 import flops_counter
