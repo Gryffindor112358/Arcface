@@ -213,7 +213,7 @@ def train_net(args):  # 程序执行的主函数
     val_dataiter = None
 
     if config.loss_name.find('triplet')>=0:   # 若损失函数是triplet，为train_dataiter配置参数
-      from triplet_image_iter import FaceImageIter
+      from triplet_image_iter import FaceImageIter  # 这里的FaceImageIter跟下面import的不一样
       triplet_params = [config.triplet_bag_size, config.triplet_alpha, config.triplet_max_ap]
       train_dataiter = FaceImageIter(
           batch_size           = args.batch_size,
@@ -223,15 +223,15 @@ def train_net(args):  # 程序执行的主函数
           rand_mirror          = config.data_rand_mirror,
           mean                 = mean,
           cutoff               = config.data_cutoff,
-          ctx_num              = args.ctx_num,
+          ctx_num              = args.ctx_num,  # 这下面就是区别了
           images_per_identity  = config.images_per_identity,
           triplet_params       = triplet_params,
-          mx_model             = model,
+          mx_model             = model,  
       )
-      _metric = LossValueMetric()
+      _metric = LossValueMetric()  # 这是个啥，找不到定义
       eval_metrics = [mx.metric.create(_metric)]
     else:# 同样为train_dataiter配置参数
-      from image_iter import FaceImageIter
+      from image_iter import FaceImageIter   # 这个FaceImageIter与上面那个case中import的不一样
       train_dataiter = FaceImageIter(
           batch_size           = args.batch_size,
           data_shape           = data_shape,
